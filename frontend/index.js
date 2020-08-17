@@ -1,3 +1,5 @@
+//let grid = document.getElementById('container');
+
 let elementsFetch = fetch(`http://localhost:3000/elements`)
   .then(function(response) {
     return response.json();
@@ -19,24 +21,13 @@ let elementsArray = [];
 async function convertArray() {
   elementsArray = new Array(await elementsFetch);
 
-  addIndexNum(18, "col", false);
-  addIndexNum(7, "row", true);
-  for (let i = 0; i < 118; i++) {
+  addIndexNum(18, "col", false, 'group');
+  addIndexNum(7, "row", true, 'period');
+  for (let i = 0; i < elementsArray[0].length; i++) {
     let grid = document.getElementById('container');
-    let textnode = document.createTextNode(elementsArray[0][i].symbol);
-    let textnode2 = document.createTextNode(elementsArray[0][i].atomic_number);
-    let textDiv = document.createElement('div');
-    let textDiv2 = document.createElement('div');
-    textDiv.id = "symbol";
-    textDiv2.id = "anum";
-    let newDiv = document.createElement("div");
-    newDiv.className = "element " + "category-" + elementsArray[0][i].category_id;
-    newDiv.id = 'e' + elementsArray[0][i].atomic_number;
-    textDiv.appendChild(textnode);
-    textDiv2.appendChild(textnode2);
-    newDiv.appendChild(textDiv2);
-    newDiv.appendChild(textDiv);
-    grid.appendChild(newDiv);
+    let gridElement = new elementClass(elementsArray[0][i].atomic_number, elementsArray[0][i].symbol, null, null, elementsArray[0][i].category_id, elementsArray[0][i].group_id, elementsArray[0][i].period_id);
+    let elementDiv = gridElement.createDivs2();
+    gridElement.appender(elementDiv, 'container');
 
     addBlankDivs(i, 0, 8);
     addBlankDivs(i, 3, 2);
@@ -67,8 +58,8 @@ async function convertArray() {
 
   for (let i = 0; i < elementSelect.length; i++) {
     elementSelect[i].addEventListener("mouseenter", async function() {
-      let bigElement = document.getElementById('bigElementInner');
-      bigElement.classList.remove('category-1', 'category-2', 'category-3', 'category-4', 'category-5', 'category-6', 'category-7', 'category-8', 'category-9', 'category-10');
+      let bigElementInner = document.getElementById('bigElementInner');
+      bigElementInner.classList.remove('category-1', 'category-2', 'category-3', 'category-4', 'category-5', 'category-6', 'category-7', 'category-8', 'category-9', 'category-10');
 
       let elementFetch = fetch(`http://localhost:3000/elements/` + (i + 1))
         .then(function(response) {
@@ -79,47 +70,94 @@ async function convertArray() {
         });
 
       elementNew = await elementFetch;
+      let bigElement = new elementClass(elementNew.atomic_number, elementNew.symbol, elementNew.name, elementNew.weight);
 
-      let textnode = document.createTextNode(elementNew.atomic_number);
-      let textnode2 = document.createTextNode(elementNew.symbol);
-      let textnode3 = document.createTextNode(elementNew.name);
-      let textnode4 = document.createTextNode(elementNew.weight);
       let atomicNode = document.getElementById('BA');
       let symbolNode = document.getElementById('BS');
       let nameNode = document.getElementById('BN');
       let weightNode = document.getElementById('BW');
-      bigElement.classList.add("category-" + elementNew.category_id);
-      atomicNode.textContent = textnode.textContent;
-      symbolNode.textContent = textnode2.textContent;
-      nameNode.textContent = textnode3.textContent;
-      weightNode.textContent = textnode4.textContent;
+      bigElementArray = bigElement.toArray();
+      bigElement.bigElementAppender(bigElementArray, [atomicNode, symbolNode, nameNode, weightNode], bigElementInner);
     })
   }
 
-  let categorySelect = document.getElementsByClassName('categories');
+    hoverEffect('category', 'categories', 'mouseenter', 'mouseleave', elementSelect);
+    hoverEffect('group', 'group', 'mouseenter', 'mouseleave', elementSelect);
+    hoverEffect('period', 'period', 'mouseenter', 'mouseleave', elementSelect);
+    elementDetail();
 
-  for (let i = 0; i < categorySelect.length; i++) {
-    categorySelect[i].addEventListener("mouseenter", function() {
-      for (let j = 0; j < elementSelect.length; j++) {
-        let k = i + 1;
-        if (elementSelect[j].classList.contains(('category-' + k)) != true) {
-          elementSelect[j].style.opacity = "50%";
-        }
-      }
-    })
-    categorySelect[i].addEventListener("mouseleave", function() {
-      for (let j = 0; j < elementSelect.length; j++) {
-        let k = i + 1;
-        if (elementSelect[j].classList.contains(('category-' + k)) != true) {
-          elementSelect[j].style.opacity = "100%";
-        }
-      }
-    })
-  }
+    async function elementDetail () {
+      let maybe = document.getElementsByClassName('element');
+        for (let i = 0; i < maybe.length; i++) {
+          maybe[i].addEventListener('click', async function () {
+            let elementFetch = fetch(`http://localhost:3000/elements/` + (i + 1))
+              .then(function(response) {
+                return response.json();
+              })
+              .then(function(json) {
+                return json
+              });
 
+            let detailFetch = fetch(`http://localhost:3000/details/0/` + (i + 1) + '/0/0')
+              .then(function(response) {
+                return response.json();
+              })
+              .then(function(json) {
+                return json
+              });
+
+          let newElement = await elementFetch;
+          let test = document.getElementById('container');
+          let test2 = document.getElementById('detailHold');
+          test.className = 'none';
+          let newDiv = document.createElement('div');
+          let btn = document.createElement('BUTTON');
+          btn.innerHTML = "Go Back";
+
+          let detail = await detailFetch;
+          let textnode = document.createTextNode(detail.info);
+          newDiv.appendChild(textnode);
+          test2.appendChild(newDiv);
+          test2.appendChild(btn);
+          test2.classList.remove('none');
+          let bigElementSave = new elementClass(newElement.atomic_number, newElement.symbol, newElement.name, newElement.weight, newElement.category_id, newElement.group_id, newElement.period_id);
+          let elementDiv = bigElementSave.createDivs2();
+          bigElementSave.appender(elementDiv, 'detailView');
+          btn.addEventListener('click', function () {
+            window.location.reload();
+          })
+        }, false);
+      }
+    }
 }
 
-function addIndexNum(a, b, c) {
+
+
+
+function hoverEffect (className, plural, activity1, activity2, array) {
+  let selector = document.getElementsByClassName(plural);
+  for (let i = 0; i < selector.length; i++) {
+    selector[i].addEventListener(activity1, function() {
+      for (let j = 0; j < array.length; j++) {
+        let k = i + 1;
+        if (array[j].classList.contains((className + '-' + k)) != true) {
+          array[j].classList.add('inactive');
+        }
+      }
+    })
+    selector[i].addEventListener(activity2, function() {
+      for (let j = 0; j < array.length; j++) {
+        let k = i + 1;
+        if (array[j].classList.contains(('inactive')) == true) {
+          array[j].classList.remove('inactive');
+        }
+      }
+    })
+  }
+}
+
+
+function addIndexNum(a, b, c, d) {
   let i = 0;
   while (i < a) {
     let grid = document.getElementById('container');
@@ -128,6 +166,7 @@ function addIndexNum(a, b, c) {
     textnode.id = "index";
     newDiv.appendChild(textnode);
     newDiv.className = "index";
+    newDiv.classList.add(d);
     if (c) {
       newDiv.id = b + "-" + (i+1);
     }
@@ -152,7 +191,6 @@ function addBlankDivs(a, b, c) {
   }
 }
 
-//python -m SimpleHTTPServer
-
 convertArray();
+
 let elementSelect = document.getElementsByClassName('element');

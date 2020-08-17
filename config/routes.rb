@@ -5,4 +5,6 @@ Rails.application.routes.draw do
 
   get '/elements/:id' => 'elements#show'
   get '/categories/:id' => 'categories#show'
+
+  get '/details/:category_id/:element_id/:group_id/:period_id' => 'details#show'
 end

@@ -4,7 +4,7 @@ h1 {
   margin-bottom: 0%;
 }
 
-#container {
+.container {
   display: grid;
   grid-template-columns: repeat(19, 1fr);
   grid-template-rows: repeat(10, 1fr);
@@ -23,6 +23,22 @@ h1 {
   grid-template-columns: repeat(14, 1fr);
   grid-template-rows: repeat(2, 1fr);
   padding: 5%;
+}
+
+#detailHold {
+  padding-top: 100px;
+}
+
+#detailView {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  grid-template-columns: 1fr)
+  grid-template-rows: repeat(4, 1fr);
+  border: 1px solid black;
+  height: 10%;
+  width: 10%;
 }
 
 #row-1 {
@@ -57,32 +73,12 @@ h1 {
   text-align: center;
 }
 
-#row-1:hover ~ .element:not(#e1):not(#e2) {
+.inactive {
   opacity: 50%;
 }
 
-#row-2:hover ~ .element:not(#e3):not(#e4):not(#e5):not(#e6):not(#e7):not(#e8):not(#e9):not(#e10) {
-  opacity: 50%;
-}
-
-#row-3:hover ~ .element:not(#e11):not(#e12):not(#e13):not(#e14):not(#e15):not(#e16):not(#e17):not(#e18) {
-  opacity: 50%;
-}
-
-#row-4:hover ~ .element:not(#e19):not(#e20):not(#e21):not(#e22):not(#e23):not(#e24):not(#e25):not(#e26):not(#e27):not(#e28):not(#e29):not(#e30):not(#e31):not(#e32):not(#e33):not(#e34):not(#e35):not(#e36) {
-  opacity: 50%;
-}
-
-#row-5:hover ~ .element:not(#e37):not(#e38):not(#e39):not(#e40):not(#e41):not(#e42):not(#e43):not(#e44):not(#e45):not(#e46):not(#e47):not(#e48):not(#e49):not(#e50):not(#e51):not(#e52):not(#e53):not(#e54) {
-  opacity: 50%;
-}
-
-#row-6:hover ~ .element:not(#e55):not(#e56):not(#e57):not(#e58):not(#e59):not(#e60):not(#e61):not(#e62):not(#e63):not(#e64):not(#e65):not(#e66):not(#e67):not(#e68):not(#e69):not(#e70):not(#e71):not(#e72):not(#e73):not(#e74):not(#e75):not(#e76):not(#e77):not(#e78):not(#e79):not(#e80):not(#e81):not(#e82):not(#e83):not(#e84):not(#e85):not(#e86) {
-  opacity: 50%;
-}
-
-#row-7:hover ~ .element:not(#e87):not(#e88):not(#e89):not(#e90):not(#e91):not(#e92):not(#e93):not(#e94):not(#e95):not(#e96):not(#e97):not(#e98):not(#e99):not(#e100):not(#e101):not(#e102):not(#e103):not(#e104):not(#e105):not(#e106):not(#e107):not(#e108):not(#e109):not(#e110):not(#e111):not(#e112):not(#e113):not(#e114):not(#e115):not(#e116):not(#e117):not(#e118) {
-  opacity: 50%;
+.none {
+  display: none;
 }
 
 #bigElement {
@@ -98,12 +94,12 @@ h1 {
   border: 1px solid black;
 }
 
-#BA {
+#BA, #BATemp {
   margin-top: 1%;
   margin-bottom: 0px;
 }
 
-#BS {
+#BS, #BSTemp {
   font-size: 200%;
   margin-top: 10%;
   margin-bottom: 10%;
@@ -111,13 +107,13 @@ h1 {
   font-weight: bold;
 }
 
-#BN {
+#BN, #BNTemp {
   margin-top: 5%;
   margin-bottom: 5%;
   text-align: center;
 }
 
-#BW {
+#BW, #BWTemp {
   margin-top: 5%;
   margin-bottom: 1%;
 }
@@ -267,11 +263,6 @@ h1 {
   position: absolute;
   width: 100%;
   height: 100%;
-}
-
-#container {
-	top:100px;
-	left:0px;
 }
 
 #e57 {

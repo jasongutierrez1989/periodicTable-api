@@ -10,5 +10,6 @@ class ElementsController < ApplicationController
     render json: element
   end
   # python -m SimpleHTTPServer
+  # python -m http.server 8000
 
 end
