@@ -42,16 +42,13 @@ async function convertArray() {
 
   let tableDiv = document.createElement('div');
   tableDiv.id = 'table';
+  let grid = document.getElementById('container');
+  grid.appendChild(tableDiv);
 
   for (let i = 0; i < 9; i++) {
-    let grid = document.getElementById('container');
-    let textnode = document.createTextNode(categoriesArray[0][i].name);
-    let textDiv = document.createElement('div');
-    textDiv.id = "category-" + (i + 1);
-    textDiv.className = "categories";
-    textDiv.appendChild(textnode);
-    tableDiv.appendChild(textDiv);
-    grid.appendChild(tableDiv);
+    let gridCategory = new categoryClass(categoriesArray[0][i].name, categoriesArray[0][i].id);
+    let categoryDiv = gridCategory.createDivs();
+    gridCategory.appender(categoryDiv, 'table');
   }
 
   addBlankDivs(1, 1, 21);
@@ -109,27 +106,106 @@ async function convertArray() {
           let newElement = await elementFetch;
           let test = document.getElementById('container');
           let test2 = document.getElementById('detailHold');
+          let test3 = document.getElementById('detailText');
           test.className = 'none';
           let newDiv = document.createElement('div');
+
           let btn = document.createElement('BUTTON');
           btn.innerHTML = "Go Back";
+          let editBtn = document.createElement('BUTTON');
+          editBtn.innerHTML = "Edit";
 
           let detail = await detailFetch;
-          let textnode = document.createTextNode(detail.info);
-          newDiv.appendChild(textnode);
+          test3.textContent = detail.info;
           test2.appendChild(newDiv);
           test2.appendChild(btn);
+          test2.appendChild(editBtn);
           test2.classList.remove('none');
           let bigElementSave = new elementClass(newElement.atomic_number, newElement.symbol, newElement.name, newElement.weight, newElement.category_id, newElement.group_id, newElement.period_id);
           let elementDiv = bigElementSave.createDivs2();
           bigElementSave.appender(elementDiv, 'detailView');
+          function toggleEditor() {
+             let theText = document.getElementById('detailHold');
+             let theEditor = document.getElementById('detailInfo');
+             let editorArea = document.getElementById('editor');
+             let subject = theText.innerHTML;
+             subject = subject.replace(new RegExp("<br />", "gi"), 'n');
+             subject = subject.replace(new RegExp("<br />", "gi"), 'n');
+             subject = subject.replace(new RegExp("<", "gi"), '<');
+             subject = subject.replace(new RegExp(">", "gi"), '>');
+             theEditor.value = subject;
+             theText.style.display = 'none';
+             editorArea.style.display = 'inline';
+          }
+
+          function doEdit() {
+             let theText = document.getElementById('detailView');
+             let theEditor = document.getElementById('detailHold');
+             let editorArea = document.getElementById('editor');
+
+             //this is where you would call your AJAX update script
+             //e.g., doXMLRequest(data);
+             //you probably want to make your DB update BEFORE converting for display
+
+             //set text to be value in editor
+             //correct line breaks, prevent HTML injection
+             let subject = theEditor.value;
+             theText.innerHTML = subject;
+
+             //hide editor, show text
+             theText.style.display = 'inline';
+             editorArea.style.display = 'none';
+          }
           btn.addEventListener('click', function () {
             window.location.reload();
           })
-        }, false);
+          editBtn.addEventListener('click', function() {
+             let theText = document.getElementById('detailText');
+             let theEditor = document.getElementById('detailInfo');
+             let editorArea = document.getElementById('editor');
+             let subject = theText.innerHTML;
+             theEditor.value = subject;
+
+             //hide text, show editor
+             theText.style.display = 'none';
+             editorArea.style.display = 'inline';
+          })
+
+          let btnSubmit = document.getElementById("submit");
+          btnSubmit.addEventListener("click", function(){
+            let theText = document.getElementById('detailText');
+            let theEditor = document.getElementById('detailInfo');
+            let editorArea = document.getElementById('editor');
+            let subject = theEditor.value;
+            theText.innerHTML = subject;
+            theText.style.display = 'inline';
+            editorArea.style.display = 'none';
+            let formData = {
+              info: theText.textContent
+            };
+
+            let configObject = {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              },
+              body: JSON.stringify(formData)
+            };
+
+            fetch(`http://localhost:3000/details/0/` + (i + 1) + '/0/0', configObject)
+              .then(function(response) {
+                return response.json();
+              })
+              .then(function(object) {
+                return object;
+              });
+          });
+        });
       }
     }
-}
+
+  }
 
 
 

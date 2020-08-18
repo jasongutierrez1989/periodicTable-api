@@ -9,7 +9,6 @@ class ElementsController < ApplicationController
     element = Element.find_by(id: params[:id])
     render json: element
   end
-  # python -m SimpleHTTPServer
   # python -m http.server 8000
 
 end

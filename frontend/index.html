@@ -8,7 +8,7 @@
       <h1>Periodic Table</h1>
       <script src="index.js"></script>
       <script src="elementClass.js"></script>
-      <div id='detailHold' class = 'none'><div id="detailView"></div></div>
+      <script src="categoryClass.js"></script>
       <div class = "container" id="container">
         <div id=blank1></div>
         <div id=bigElement>
@@ -20,7 +20,14 @@
           </div>
         </div>
       </div>
-    </div>
+      <div id='detailHold'>
+        <div id="detailView"></div>
+        <div id="detailText"></div>
+        <div id="editor">
+          <textarea id="detailInfo"></textarea><br />
+          <input name="submit" id="submit" type ="button" value="Submit"/>
+        </div>
+      </div>
 
   </body>
 

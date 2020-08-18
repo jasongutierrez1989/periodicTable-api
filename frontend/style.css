@@ -25,6 +25,10 @@ h1 {
   padding: 5%;
 }
 
+div#editor {
+   display: none;
+}
+
 #detailHold {
   padding-top: 100px;
 }
@@ -39,6 +43,11 @@ h1 {
   border: 1px solid black;
   height: 10%;
   width: 10%;
+}
+
+#detailInfo {
+  width: 100%;
+  height: 50%;
 }
 
 #row-1 {

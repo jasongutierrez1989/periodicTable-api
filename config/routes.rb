@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   get '/categories/:id' => 'categories#show'
 
   get '/details/:category_id/:element_id/:group_id/:period_id' => 'details#show'
+  patch '/details/:category_id/:element_id/:group_id/:period_id' => 'details#update'
 end
