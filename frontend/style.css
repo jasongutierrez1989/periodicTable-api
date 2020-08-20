@@ -25,7 +25,7 @@ h1 {
   padding: 5%;
 }
 
-div#editor {
+#editor {
    display: none;
 }
 
@@ -88,6 +88,10 @@ div#editor {
 
 .none {
   display: none;
+}
+
+.active {
+  display: inline;
 }
 
 #bigElement {
