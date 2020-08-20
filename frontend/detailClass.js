@@ -1,4 +1,4 @@
-class detail {
+class detailClass {
   constructor(info, category_id, element_id, group_id, period_id) {
     this.info = info;
     this.category_id = category_id;
@@ -7,48 +7,81 @@ class detail {
     this.period_id = period_id;
   }
 
-  async function elementDetail () {
-    let maybe = document.getElementsByClassName('element');
-      for (let i = 0; i < maybe.length; i++) {
-        maybe[i].addEventListener('click', async function () {
-          let elementFetch = fetch(`http://localhost:3000/elements/` + (i + 1))
-            .then(function(response) {
-              return response.json();
-            })
-            .then(function(json) {
-              return json
-            });
+  uriConstructor() {
+    let uri = this.category_id + '/' + this.element_id + '/' + this.group_id + '/' + this.period_id;
 
-          let detailFetch = fetch(`http://localhost:3000/details/0/` + (i + 1) + '/0/0')
-            .then(function(response) {
-              return response.json();
-            })
-            .then(function(json) {
-              return json
-            });
-
-        let newElement = await elementFetch;
-        let test = document.getElementById('container');
-        let test2 = document.getElementById('detailHold');
-        test.className = 'none';
-        let newDiv = document.createElement('div');
-        let btn = document.createElement('BUTTON');
-        btn.innerHTML = "Go Back";
-
-        let detail = await detailFetch;
-        let textnode = document.createTextNode(detail.info);
-        newDiv.appendChild(textnode);
-        test2.appendChild(newDiv);
-        test2.appendChild(btn);
-        test2.classList.remove('none');
-        let bigElementSave = new elementClass(newElement.atomic_number, newElement.symbol, newElement.name, newElement.weight, newElement.category_id, newElement.group_id, newElement.period_id);
-        let elementDiv = bigElementSave.createDivs2();
-        bigElementSave.appender(elementDiv, 'detailView');
-        btn.addEventListener('click', function () {
-          window.location.reload();
-        })
-      }, false);
-    }
+    return uri;
   }
 
+  elementGet(array) {
+    let newArray = [];
+    for(let i = 0; i < array.length; i++) {
+      let domElement = document.getElementById(array[i]);
+      newArray[i] = domElement;
+    }
+    return newArray;
+  }
+
+  toggleEditor(array) {
+    let newArray = this.elementGet(array);
+    let detailInfo = newArray[0].innerText;
+    newArray[1].value = newArray[0].innerText;
+
+    newArray[0].style.display = 'none';
+    newArray[2].style.display = 'inline';
+  }
+
+  submitEdit(array) {
+    let test = document.getElementById('')
+    let detailInfo = this.elementGet(array);
+    let subject = detailInfo[1].value;
+    detailInfo[0].innerHTML = subject;
+
+    detailInfo[0].style.display = 'inline';
+    detailInfo[2].style.display = 'none';
+
+    let uri = this.uriConstructor();
+    let formData = {
+      info: detailInfo[0].textContent
+    };
+    let configObject = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+        },
+        body: JSON.stringify(formData)
+      };
+
+      fetch((`http://localhost:3000/details/` + uri), configObject)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(object) {
+          return object;
+        });
+  }
+
+  addText(identifier) {
+    identifier.textContent = this.info;
+  }
+
+  addRemoveClass(identifier1, identifier2) {
+    identifier1.className = 'none';
+    identifier2.classList.remove = 'none';
+  }
+
+  createDomElements(array) {
+    let btn1 = document.createElement('BUTTON');
+    let btn2 = document.createElement('BUTTON');
+
+    btn1.addEventListener('click', function() {
+      window.location.reload();
+    })
+    btn2.addEventListener('click', this.toggleEditor(array));
+
+    let btnArray = [btn1, btn2];
+
+    return btnArray;
+  }
 }

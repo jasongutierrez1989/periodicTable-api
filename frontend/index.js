@@ -1,4 +1,4 @@
-//let grid = document.getElementById('container');
+const elementSelect = document.getElementsByClassName('element');
 
 let elementsFetch = fetch(`http://localhost:3000/elements`)
   .then(function(response) {
@@ -18,11 +18,32 @@ let categoriesFetch = fetch(`http://localhost:3000/categories`)
 
 let elementsArray = [];
 
-async function convertArray() {
+async function drawPeriodicTable() {
   elementsArray = new Array(await elementsFetch);
+  categoriesArray = new Array(await categoriesFetch);
 
   addIndexNum(18, "col", false, 'group');
   addIndexNum(7, "row", true, 'period');
+
+  drawElements();
+
+  let tableDiv = document.createElement('div');
+  tableDiv.id = 'table';
+  let grid = document.getElementById('container');
+  grid.appendChild(tableDiv);
+
+  drawCategories();
+
+  addBlankDivs(1, 1, 21);
+
+  hoverEffect('category', 'categories', 'mouseenter', 'mouseleave', elementSelect);
+  hoverEffect('group', 'group', 'mouseenter', 'mouseleave', elementSelect);
+  hoverEffect('period', 'period', 'mouseenter', 'mouseleave', elementSelect);
+  elementDetail();
+  setBigElement();
+}
+
+async function drawElements() {
   for (let i = 0; i < elementsArray[0].length; i++) {
     let grid = document.getElementById('container');
     let gridElement = new elementClass(elementsArray[0][i].atomic_number, elementsArray[0][i].symbol, null, null, elementsArray[0][i].category_id, elementsArray[0][i].group_id, elementsArray[0][i].period_id);
@@ -35,24 +56,18 @@ async function convertArray() {
     addBlankDivs(i, 56, 1);
     addBlankDivs(i, 87, 1);
     addBlankDivs(i, 118, 21);
-
   }
-  categoriesArray = new Array(await categoriesFetch);
+}
 
-
-  let tableDiv = document.createElement('div');
-  tableDiv.id = 'table';
-  let grid = document.getElementById('container');
-  grid.appendChild(tableDiv);
-
+async function drawCategories() {
   for (let i = 0; i < 9; i++) {
     let gridCategory = new categoryClass(categoriesArray[0][i].name, categoriesArray[0][i].id);
     let categoryDiv = gridCategory.createDivs();
     gridCategory.appender(categoryDiv, 'table');
   }
+}
 
-  addBlankDivs(1, 1, 21);
-
+async function setBigElement() {
   for (let i = 0; i < elementSelect.length; i++) {
     elementSelect[i].addEventListener("mouseenter", async function() {
       let bigElementInner = document.getElementById('bigElementInner');
@@ -77,136 +92,62 @@ async function convertArray() {
       bigElement.bigElementAppender(bigElementArray, [atomicNode, symbolNode, nameNode, weightNode], bigElementInner);
     })
   }
+}
 
-    hoverEffect('category', 'categories', 'mouseenter', 'mouseleave', elementSelect);
-    hoverEffect('group', 'group', 'mouseenter', 'mouseleave', elementSelect);
-    hoverEffect('period', 'period', 'mouseenter', 'mouseleave', elementSelect);
-    elementDetail();
-
-    async function elementDetail () {
-      let maybe = document.getElementsByClassName('element');
-        for (let i = 0; i < maybe.length; i++) {
-          maybe[i].addEventListener('click', async function () {
-            let elementFetch = fetch(`http://localhost:3000/elements/` + (i + 1))
-              .then(function(response) {
-                return response.json();
-              })
-              .then(function(json) {
-                return json
-              });
-
-            let detailFetch = fetch(`http://localhost:3000/details/0/` + (i + 1) + '/0/0')
-              .then(function(response) {
-                return response.json();
-              })
-              .then(function(json) {
-                return json
-              });
-
-          let newElement = await elementFetch;
-          let test = document.getElementById('container');
-          let test2 = document.getElementById('detailHold');
-          let test3 = document.getElementById('detailText');
-          test.className = 'none';
-          let newDiv = document.createElement('div');
-
-          let btn = document.createElement('BUTTON');
-          btn.innerHTML = "Go Back";
-          let editBtn = document.createElement('BUTTON');
-          editBtn.innerHTML = "Edit";
-
-          let detail = await detailFetch;
-          test3.textContent = detail.info;
-          test2.appendChild(newDiv);
-          test2.appendChild(btn);
-          test2.appendChild(editBtn);
-          test2.classList.remove('none');
-          let bigElementSave = new elementClass(newElement.atomic_number, newElement.symbol, newElement.name, newElement.weight, newElement.category_id, newElement.group_id, newElement.period_id);
-          let elementDiv = bigElementSave.createDivs2();
-          bigElementSave.appender(elementDiv, 'detailView');
-          function toggleEditor() {
-             let theText = document.getElementById('detailHold');
-             let theEditor = document.getElementById('detailInfo');
-             let editorArea = document.getElementById('editor');
-             let subject = theText.innerHTML;
-             subject = subject.replace(new RegExp("<br />", "gi"), 'n');
-             subject = subject.replace(new RegExp("<br />", "gi"), 'n');
-             subject = subject.replace(new RegExp("<", "gi"), '<');
-             subject = subject.replace(new RegExp(">", "gi"), '>');
-             theEditor.value = subject;
-             theText.style.display = 'none';
-             editorArea.style.display = 'inline';
-          }
-
-          function doEdit() {
-             let theText = document.getElementById('detailView');
-             let theEditor = document.getElementById('detailHold');
-             let editorArea = document.getElementById('editor');
-
-             //this is where you would call your AJAX update script
-             //e.g., doXMLRequest(data);
-             //you probably want to make your DB update BEFORE converting for display
-
-             //set text to be value in editor
-             //correct line breaks, prevent HTML injection
-             let subject = theEditor.value;
-             theText.innerHTML = subject;
-
-             //hide editor, show text
-             theText.style.display = 'inline';
-             editorArea.style.display = 'none';
-          }
-          btn.addEventListener('click', function () {
-            window.location.reload();
+async function elementDetail () {
+  let allElements = document.getElementsByClassName('element');
+    for (let i = 0; i < allElements.length; i++) {
+      allElements[i].addEventListener('click', async function () {
+        let elementFetch = fetch(`http://localhost:3000/elements/` + (i + 1))
+          .then(function(response) {
+            return response.json();
           })
-          editBtn.addEventListener('click', function() {
-             let theText = document.getElementById('detailText');
-             let theEditor = document.getElementById('detailInfo');
-             let editorArea = document.getElementById('editor');
-             let subject = theText.innerHTML;
-             theEditor.value = subject;
-
-             //hide text, show editor
-             theText.style.display = 'none';
-             editorArea.style.display = 'inline';
-          })
-
-          let btnSubmit = document.getElementById("submit");
-          btnSubmit.addEventListener("click", function(){
-            let theText = document.getElementById('detailText');
-            let theEditor = document.getElementById('detailInfo');
-            let editorArea = document.getElementById('editor');
-            let subject = theEditor.value;
-            theText.innerHTML = subject;
-            theText.style.display = 'inline';
-            editorArea.style.display = 'none';
-            let formData = {
-              info: theText.textContent
-            };
-
-            let configObject = {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-              },
-              body: JSON.stringify(formData)
-            };
-
-            fetch(`http://localhost:3000/details/0/` + (i + 1) + '/0/0', configObject)
-              .then(function(response) {
-                return response.json();
-              })
-              .then(function(object) {
-                return object;
-              });
+          .then(function(json) {
+            return json
           });
-        });
-      }
-    }
 
+        let detailFetch = fetch(`http://localhost:3000/details/0/` + (i + 1) + '/0/0')
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(json) {
+            return json
+          });
+
+      let newElement = await elementFetch;
+      let newDiv = document.createElement('div');
+      let detail = await detailFetch;
+      let detailElement = new detailClass(detail.info , detail.category_id , detail.element_id , detail.group_id , detail.period_id);
+      let domArray = detailElement.elementGet(['container', 'detailHold', 'detailText']);
+      let editBtn = document.createElement('BUTTON');
+      editBtn.innerHTML = "Edit";
+      let goBack = document.createElement('BUTTON');
+      goBack.innerHTML = "Go Back";
+      goBack.addEventListener('click', function() {
+        window.location.reload();
+      })
+
+      detailElement.addRemoveClass(domArray[0], domArray[1]);
+      detailElement.addText(domArray[2]);
+      domArray[1].appendChild(newDiv);
+      domArray[1].appendChild(editBtn);
+      domArray[1].appendChild(goBack);
+      let bigElementSave = new elementClass(newElement.atomic_number, newElement.symbol, newElement.name, newElement.weight, newElement.category_id, newElement.group_id, newElement.period_id);
+      let elementDiv = bigElementSave.createDivs2();
+      bigElementSave.appender(elementDiv, 'detailView');
+      editBtn.addEventListener('click', function() {
+        detailElement.toggleEditor(['detailText', 'detailInfo', 'editor']);
+        editBtn.classList.add('none');
+      });
+
+      let submit = document.getElementById('submit');
+      submit.addEventListener('click', function() {
+        detailElement.submitEdit(['detailText', 'detailInfo', 'editor']);
+        editBtn.classList.remove('none');
+      });
+    });
   }
-
+}
 
 
 
@@ -267,6 +208,4 @@ function addBlankDivs(a, b, c) {
   }
 }
 
-convertArray();
-
-let elementSelect = document.getElementsByClassName('element');
+drawPeriodicTable();

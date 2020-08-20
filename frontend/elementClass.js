@@ -99,4 +99,15 @@ class elementClass {
     }
     identifier.classList.add("category-" + elementNew.category_id);
   }
+
+  elementLocator(key, identifier) {
+    if (key == 1) {
+      let element = document.getElementById(identifier);
+      return element;
+    }
+    else {
+      let elements = document.getElementsByClassName(identifier);
+      return elements;
+    }
+  }
 }
