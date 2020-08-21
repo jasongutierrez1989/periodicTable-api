@@ -1,25 +1,8 @@
 # README
+Built on ruby 2.5.5
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+App contains all seed data to initialize the database.
 
-Things you may want to cover:
+Welcome to the Periodic Table! This interactive table lets users view the table as a whole, or pick an element to get more information about.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-"# periodicTable-api" 
+"# periodicTable-api"
