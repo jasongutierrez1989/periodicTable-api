@@ -1,6 +1,14 @@
 const elementSelect = document.getElementsByClassName('element');
+const container = 'container';
+const detailText = 'detailText';
+const detailHold = 'detailHold';
+const detailInfo = 'detailInfo';
+const editor = 'editor';
+const bigElementDiv = 'bigElementInner';
+const elementsUri = `http://localhost:3000/elements`;
+const categoriesUri = `http://localhost:3000/categories`;
 
-let elementsFetch = fetch(`http://localhost:3000/elements`)
+let elementsFetch = fetch(elementsUri)
   .then(function(response) {
     return response.json();
   })
@@ -8,7 +16,7 @@ let elementsFetch = fetch(`http://localhost:3000/elements`)
     return json
   });
 
-let categoriesFetch = fetch(`http://localhost:3000/categories`)
+let categoriesFetch = fetch(categoriesUri)
   .then(function(response) {
     return response.json();
   })
@@ -30,7 +38,7 @@ async function drawPeriodicTable() {
 
   let tableDiv = document.createElement('div');
   tableDiv.id = 'table';
-  let grid = document.getElementById('container');
+  let grid = document.getElementById(container);
   grid.appendChild(tableDiv);
 
   drawCategories();
@@ -46,10 +54,10 @@ async function drawPeriodicTable() {
 
 async function drawElements() {
   for (let i = 0; i < elementsArray[0].length; i++) {
-    let grid = document.getElementById('container');
+    let grid = document.getElementById(container);
     let gridElement = new elementClass(elementsArray[0][i].atomic_number, elementsArray[0][i].symbol, null, null, elementsArray[0][i].category_id, elementsArray[0][i].group_id, elementsArray[0][i].period_id);
     let elementDiv = gridElement.createDivs2();
-    gridElement.appender(elementDiv, 'container');
+    gridElement.appender(elementDiv, container);
 
     addBlankDivs(i, 0, 8);
     addBlankDivs(i, 3, 2);
@@ -71,10 +79,10 @@ async function drawCategories() {
 async function setBigElement() {
   for (let i = 0; i < elementSelect.length; i++) {
     elementSelect[i].addEventListener("mouseenter", async function() {
-      let bigElementInner = document.getElementById('bigElementInner');
+      let bigElementInner = document.getElementById(bigElementDiv);
       bigElementInner.classList.remove('category-1', 'category-2', 'category-3', 'category-4', 'category-5', 'category-6', 'category-7', 'category-8', 'category-9', 'category-10');
 
-      let elementFetch = fetch(`http://localhost:3000/elements/` + (i + 1))
+      let elementFetch = fetch(elementsUri + `/` + (i + 1))
         .then(function(response) {
           return response.json();
         })
@@ -99,7 +107,7 @@ async function elementDetail () {
   let allElements = document.getElementsByClassName('element');
     for (let i = 0; i < allElements.length; i++) {
       allElements[i].addEventListener('click', async function () {
-        let elementFetch = fetch(`http://localhost:3000/elements/` + (i + 1))
+        let elementFetch = fetch(elementsUri + `/` + (i + 1))
           .then(function(response) {
             return response.json();
           })
@@ -119,7 +127,7 @@ async function elementDetail () {
       let newDiv = document.createElement('div');
       let detail = await detailFetch;
       let detailElement = new detailClass(detail.info , detail.category_id , detail.element_id , detail.group_id , detail.period_id);
-      let domArray = detailElement.elementGet(['container', 'detailHold', 'detailText']);
+      let domArray = detailElement.elementGet([container, detailHold, detailText]);
       let editBtn = document.createElement('BUTTON');
       editBtn.innerHTML = "Edit";
       let goBack = document.createElement('BUTTON');
@@ -137,16 +145,16 @@ async function elementDetail () {
       let elementDiv = bigElementSave.createDivs2();
       bigElementSave.appender(elementDiv, 'detailView');
       editBtn.addEventListener('click', function() {
-        detailElement.toggleEditor(['detailText', 'detailInfo', 'editor']);
+        detailElement.toggleEditor([detailText, detailInfo, editor]);
         editBtn.classList.add('none');
       });
 
       let submit = document.getElementById('submit');
       submit.addEventListener('click', function() {
-        let current = document.getElementById('detailText');
-        let newInfo = document.getElementById('detailInfo');
+        let current = document.getElementById(detailText);
+        let newInfo = document.getElementById(detailInfo);
         if (newInfo.value != current.innerText) {
-          detailElement.submitEdit(['detailText', 'detailInfo', 'editor']);
+          detailElement.submitEdit([detailText, detailInfo, editor]);
           editBtn.classList.remove('none');
         }
         else {
@@ -186,7 +194,7 @@ function hoverEffect (className, plural, activity1, activity2, array) {
 function addIndexNum(a, b, c, d) {
   let i = 0;
   while (i < a) {
-    let grid = document.getElementById('container');
+    let grid = document.getElementById(container);
     let newDiv = document.createElement("div");
     let textnode = document.createTextNode(i+1);
     textnode.id = "index";
@@ -208,7 +216,7 @@ function addBlankDivs(a, b, c) {
   if (a == b) {
     let count = 0;
     while (count < c) {
-      let grid = document.getElementById('container');
+      let grid = document.getElementById(container);
       let newDiv = document.createElement("div");
       newDiv.className = "blank";
       grid.appendChild(newDiv);
