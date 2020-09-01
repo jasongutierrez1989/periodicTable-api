@@ -17,6 +17,7 @@ let categoriesFetch = fetch(`http://localhost:3000/categories`)
   });
 
 let elementsArray = [];
+let categoriesArray = [];
 
 async function drawPeriodicTable() {
   elementsArray = new Array(await elementsFetch);
@@ -142,8 +143,16 @@ async function elementDetail () {
 
       let submit = document.getElementById('submit');
       submit.addEventListener('click', function() {
-        detailElement.submitEdit(['detailText', 'detailInfo', 'editor']);
-        editBtn.classList.remove('none');
+        let current = document.getElementById('detailText');
+        let newInfo = document.getElementById('detailInfo');
+        if (newInfo.value != current.innerText) {
+          detailElement.submitEdit(['detailText', 'detailInfo', 'editor']);
+          editBtn.classList.remove('none');
+        }
+        else {
+          alert("Must make an edit to the text in order to submit");
+          event.preventDefault();
+        }
       });
     });
   }
